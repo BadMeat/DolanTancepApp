@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">DolanTancepApp</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="tv">Tv</string>
+    <string name="movie">Movie</string>
+    <string name="fav">Favorite</string>
+    <string name="title">Title</string>
+    <string name="date">Date</string>
+    <string name="rate">Rate</string>
+    <string name="poster">Poster</string>
+    <string name="search">Search</string>
+</resources>
