@@ -11,4 +11,13 @@
     <string name="rate">Rate</string>
     <string name="poster">Poster</string>
     <string name="search">Search</string>
+    <string name="save_succes">Save Succes</string>
+    <string name="delete_success">Delete Success</string>
+    <string name="setting">Setting</string>
+    <string name="relase_reminder">Relase Reminder</string>
+    <string name="daily_reminder">Daily Reminder</string>
+    <string name="reminder_showing_move_that_released_today">Reminder showing move that released today</string>
+    <string name="reminder_for_return_to_app">Reminder for return to app</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
 </resources>

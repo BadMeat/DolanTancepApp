@@ -9,6 +9,7 @@ data class Favorite(
 ) {
     companion object {
         const val TABLE_NAME = "TABLE_FAVORITE"
+        const val FAV_ID = "FAV_ID"
         const val FAV_TITLE = "FAV_TITLE"
         const val FAV_DATE = "FAV_DATE"
         const val FAV_RATE = "FAV_RATE"
