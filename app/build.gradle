@@ -16,7 +16,7 @@ android {
 
         buildConfigField("String", "BASE_URL", "\"https://api.themoviedb.org/3/\"")
         buildConfigField("String", "API_KEY", "\"3da8902babab85c9ac30e837198e9bf9\"")
-        buildConfigField("String", "BASE_IMAGE", "\"https://image.tmdb.org/t/p/w185\"")
+        buildConfigField("String", "BASE_IMAGE", "\"https://image.tmdb.org/ContentProvider/p/w185\"")
     }
     buildTypes {
         release {
@@ -24,6 +24,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+}
+
+androidExtensions {
+    experimental = true
 }
 
 dependencies {

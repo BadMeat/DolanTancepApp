@@ -1,4 +1,4 @@
-package com.dolan.dolantancepapp.database
+package com.dolan.dolantancepapp.db
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,15 +6,18 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.dolan.dolantancepapp.BuildConfig
 import com.dolan.dolantancepapp.R
-import com.squareup.picasso.Picasso
 
-class FavoriteAdapter(
-    private val favList: List<FavoriteTemp>,
-    private val listener: (FavoriteTemp) -> Unit
-) :
-    RecyclerView.Adapter<FavoriteAdapter.FavoriteHolder>() {
+class FavoriteAdapter : RecyclerView.Adapter<FavoriteAdapter.FavoriteHolder>() {
+
+    private val favList = mutableListOf<Favorite>()
+
+    fun setFavList(e: List<Favorite>) {
+        favList.clear()
+        favList.addAll(e)
+        notifyDataSetChanged()
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FavoriteHolder {
         return FavoriteHolder(
             LayoutInflater.from(parent.context).inflate(
@@ -28,7 +31,7 @@ class FavoriteAdapter(
     override fun getItemCount() = favList.size
 
     override fun onBindViewHolder(holder: FavoriteHolder, position: Int) {
-        holder.bindItem(favList[position], listener)
+        holder.bindItem(favList[position], position)
     }
 
     class FavoriteHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -37,17 +40,20 @@ class FavoriteAdapter(
         private val txtDate: TextView = view.findViewById(R.id.txt_date)
         private val txtRate: TextView = view.findViewById(R.id.txt_rate)
         private val imgPoster: ImageView = view.findViewById(R.id.img_poster)
-        private val btnFav: ImageView = view.findViewById(R.id.btn_fav)
 
-        fun bindItem(e: FavoriteTemp, listener: (FavoriteTemp) -> Unit) {
+        fun bindItem(e: Favorite, position: Int) {
             txtTitle.text = e.title
             txtDate.text = e.date
             txtRate.text = e.rate.toString()
-            Picasso.get().load("${BuildConfig.BASE_IMAGE}${e.poster}").into(imgPoster)
-            btnFav.setOnClickListener {
-                listener(e)
-            }
+            itemView.setOnClickListener(
+                CustomItemClicked(
+                    position,
+                    object : CustomItemClicked.OnItemClicked {
+                        override fun itemClicked(view: View?, position: Int) {
 
+                        }
+                    })
+            )
         }
     }
 }

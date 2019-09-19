@@ -5,14 +5,12 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import android.widget.RemoteViews
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.dolan.dolantancepapp.R
-import com.dolan.dolantancepapp.database.Favorite
+import com.dolan.dolantancepapp.database.FavoriteTemp
 import com.dolan.dolantancepapp.database.database
-import com.dolan.dolantancepapp.favorite.FavoriteWidget
 import com.dolan.dolantancepapp.favorite.StackWidgetService
 import com.dolan.dolantancepapp.network.ApiClient
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -20,7 +18,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import org.jetbrains.anko.db.insert
 
-class TvViewModel() : ViewModel() {
+class TvViewModel : ViewModel() {
 
     private val listTv: MutableLiveData<MutableList<ResultsItem?>> = MutableLiveData()
 
@@ -30,12 +28,12 @@ class TvViewModel() : ViewModel() {
         try {
             context?.database?.use {
                 insert(
-                    Favorite.TABLE_NAME,
-                    Favorite.FAV_ID to it.id,
-                    Favorite.FAV_TITLE to it.name,
-                    Favorite.FAV_RATE to it.voteAverage,
-                    Favorite.FAV_DATE to it.firstAirDate,
-                    Favorite.FAV_POSTER to it.posterPath
+                    FavoriteTemp.TABLE_NAME,
+                    FavoriteTemp.FAV_ID to it.id,
+                    FavoriteTemp.FAV_TITLE to it.name,
+                    FavoriteTemp.FAV_RATE to it.voteAverage,
+                    FavoriteTemp.FAV_DATE to it.firstAirDate,
+                    FavoriteTemp.FAV_POSTER to it.posterPath
                 )
             }
             Toast.makeText(
@@ -65,7 +63,6 @@ class TvViewModel() : ViewModel() {
                     if (result != null) {
                         item.addAll(result.toMutableList())
                     }
-                    Log.d("Respnse", "$result")
                 },
                 { error -> Log.e("Error Response", "$error") }
             )

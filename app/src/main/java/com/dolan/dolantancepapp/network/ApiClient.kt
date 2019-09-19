@@ -1,6 +1,7 @@
 package com.dolan.dolantancepapp.network
 
 import com.dolan.dolantancepapp.BuildConfig
+import com.dolan.dolantancepapp.detail.DetailResponse
 import com.dolan.dolantancepapp.tv.TvResponse
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import io.reactivex.Observable
@@ -38,4 +39,7 @@ class ApiClient {
         return data.getMovieList(language, title)
     }
 
+    fun getTvDetail(id: Int, language: String?): Observable<Response<DetailResponse>> {
+        return data.getTvDetail(id, language)
+    }
 }

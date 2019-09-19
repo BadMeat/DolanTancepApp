@@ -1,6 +1,6 @@
 package com.dolan.dolantancepapp.database
 
-data class Favorite(
+data class FavoriteTemp(
     val id: Int?,
     val title: String?,
     val date: String?,

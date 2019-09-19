@@ -41,15 +41,18 @@ class TvAdapter(private val itemList: List<ResultsItem?>, val listener: (Results
             txtTitle.text = e.name
             txtDate.text = e.firstAirDate
             txtRate.text = e.voteAverage.toString()
-            var isSave = false
             Picasso.get().load("${BuildConfig.BASE_IMAGE}${e.posterPath}").into(imgPoster)
-            btnFav.setOnClickListener {
-                isSave = !isSave
-                if (isSave) {
-                    btnFav.setImageResource(R.drawable.ic_favorited)
-                }
+            itemView.setOnClickListener {
                 listener(e)
             }
+//            var isSave = false
+//            btnFav.setOnClickListener {
+//                isSave = !isSave
+//                if (isSave) {
+//                    btnFav.setImageResource(R.drawable.ic_favorited)
+//                }
+//                listener(e)
+//            }
         }
     }
 }

@@ -10,7 +10,7 @@ import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import com.dolan.dolantancepapp.BuildConfig
 import com.dolan.dolantancepapp.R
-import com.dolan.dolantancepapp.database.Favorite
+import com.dolan.dolantancepapp.database.FavoriteTemp
 import com.dolan.dolantancepapp.database.database
 import com.squareup.picasso.Picasso
 import org.jetbrains.anko.db.classParser
@@ -19,7 +19,7 @@ import org.jetbrains.anko.db.select
 class StackRemoteViewFactory(ctx: Context) : RemoteViewsService.RemoteViewsFactory {
 
     private val mWidgetItem = ArrayList<Bitmap>()
-    private val faList = mutableListOf<Favorite>()
+    private val faList = mutableListOf<FavoriteTemp>()
     private var context: Context? = null
 
     init {
@@ -38,14 +38,14 @@ class StackRemoteViewFactory(ctx: Context) : RemoteViewsService.RemoteViewsFacto
         val token = Binder.clearCallingIdentity()
 
         context?.database?.use {
-            val select = select(Favorite.TABLE_NAME)
-            val parse = select.parseList(classParser<Favorite>())
+            val select = select(FavoriteTemp.TABLE_NAME)
+            val parse = select.parseList(classParser<FavoriteTemp>())
             faList.addAll(parse)
         }
 
         Log.d(StackRemoteViewFactory::class.java.simpleName, "Update lhoo")
 
-        for (i: Favorite in faList) {
+        for (i: FavoriteTemp in faList) {
             if (i.poster?.trim() != null) {
                 val bitmap = Picasso.get().load("${BuildConfig.BASE_IMAGE}${i.poster}").get()
                 mWidgetItem.add(bitmap)

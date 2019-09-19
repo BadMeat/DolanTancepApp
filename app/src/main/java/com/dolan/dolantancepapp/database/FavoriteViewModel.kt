@@ -3,9 +3,8 @@ package com.dolan.dolantancepapp.database
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import org.jetbrains.anko.db.classParser
+import com.dolan.dolantancepapp.db.Favorite
 import org.jetbrains.anko.db.delete
-import org.jetbrains.anko.db.select
 
 class FavoriteViewModel : ViewModel() {
 
@@ -13,11 +12,7 @@ class FavoriteViewModel : ViewModel() {
 
     fun getFavoriteData(ctx: Context) {
         val itemList = mutableListOf<Favorite>()
-        ctx.database.use {
-            val select = select(Favorite.TABLE_NAME)
-            val result = select.parseList(classParser<Favorite>())
-            itemList.addAll(result)
-        }
+
         favoriteList.postValue(itemList)
     }
 
@@ -26,7 +21,7 @@ class FavoriteViewModel : ViewModel() {
     fun deleteFavoriteData(db: DatabaseOpenHelper?, id: Int) {
         db?.use {
             delete(
-                Favorite.TABLE_NAME, "${Favorite.FAV_ID} = {id}",
+                FavoriteTemp.TABLE_NAME, "${FavoriteTemp.FAV_ID} = {id}",
                 "id" to id
             )
         }

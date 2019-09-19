@@ -4,6 +4,9 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <permission android:name="com.dolan.dolantancepapp.DATABASE_WRITE" />
+    <permission android:name="com.dolan.dolantancepapp.DATABASE_READ" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -11,6 +14,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <provider
+            android:name=".db.ContentProvider"
+            android:authorities="com.dolan.dolantancepapp"
+            android:exported="true"
+            android:readPermission="com.dolan.dolantancepapp.DATABASE_READ"
+            android:writePermission="com.dolan.dolantancepapp.DATABASE_WRITE" />
+
         <service
             android:name=".favorite.StackWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />

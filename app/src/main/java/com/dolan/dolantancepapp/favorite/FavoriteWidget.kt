@@ -46,7 +46,7 @@ class FavoriteWidget : AppWidgetProvider() {
             appWidgetId: Int
         ) {
 
-            Log.d("Favorite Widget", "Masuk Siniiii")
+            Log.d("FavoriteTemp Widget", "Masuk Siniiii")
 
             val intent = Intent(context, StackWidgetService::class.java)
             intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)

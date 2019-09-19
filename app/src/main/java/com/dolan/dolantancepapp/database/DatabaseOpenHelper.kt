@@ -19,17 +19,17 @@ class DatabaseOpenHelper(ctx: Context) : ManagedSQLiteOpenHelper(ctx, "favorite.
 
     override fun onCreate(db: SQLiteDatabase?) {
         db?.createTable(
-            Favorite.TABLE_NAME, true,
-            Favorite.FAV_ID to INTEGER + PRIMARY_KEY,
-            Favorite.FAV_TITLE to TEXT,
-            Favorite.FAV_DATE to TEXT,
-            Favorite.FAV_RATE to REAL,
-            Favorite.FAV_POSTER to TEXT
+            FavoriteTemp.TABLE_NAME, true,
+            FavoriteTemp.FAV_ID to INTEGER + PRIMARY_KEY,
+            FavoriteTemp.FAV_TITLE to TEXT,
+            FavoriteTemp.FAV_DATE to TEXT,
+            FavoriteTemp.FAV_RATE to REAL,
+            FavoriteTemp.FAV_POSTER to TEXT
         )
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-        db?.dropTable(Favorite.TABLE_NAME)
+        db?.dropTable(FavoriteTemp.TABLE_NAME)
     }
 }
 

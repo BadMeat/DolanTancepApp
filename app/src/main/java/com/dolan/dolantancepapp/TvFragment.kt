@@ -4,6 +4,7 @@ package com.dolan.dolantancepapp
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -67,8 +68,9 @@ class TvFragment : Fragment(), SearchView.OnQueryTextListener {
         viewModel.getTvList().observe(this, getTv)
 
         tvAdapter = TvAdapter(tvList) {
-            viewModel.insertFav(context, it)
-            updateWidget()
+            val intent = Intent(context,DetailActivity::class.java)
+            intent.putExtra(DetailActivity.EXTRA_DETAIL, it.id)
+            startActivity(intent)
         }
 
         recycler_view.adapter = tvAdapter
