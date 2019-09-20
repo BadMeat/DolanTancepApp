@@ -62,7 +62,7 @@ class ContentProvider : ContentProvider() {
             }
         }
         context?.contentResolver?.notifyChange(
-            CONTENT_URI, FavoriteFragment.DataObserver(Handler(), context)
+            CONTENT_URI, null
         )
         return Uri.parse("$CONTENT_URI/$added")
     }

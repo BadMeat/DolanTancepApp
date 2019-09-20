@@ -1,5 +1,6 @@
 package com.dolan.dolantancepapp.db
 
+import android.database.Cursor
 import android.net.Uri
 
 class DatabaseContract {
@@ -14,11 +15,19 @@ class DatabaseContract {
 
 
         const val AUTH = "com.dolan.dolantancepapp"
-        const val SCHEMA = "content"
-        var CONTENT_URI = Uri.Builder()
+        private const val SCHEMA = "content"
+        var CONTENT_URI: Uri = Uri.Builder()
             .authority(AUTH)
             .scheme(SCHEMA)
             .appendPath(TABLE_FAV)
             .build()
+
+        fun getColumnInt(cursor: Cursor?, columnName: String?): Int? {
+            return cursor?.getInt(cursor.getColumnIndexOrThrow(columnName))
+        }
+
+        fun getColumnString(cursor: Cursor?, columnName: String?): String? {
+            return cursor?.getString(cursor.getColumnIndexOrThrow(columnName))
+        }
     }
 }

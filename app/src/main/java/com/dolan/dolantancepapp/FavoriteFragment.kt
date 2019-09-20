@@ -71,6 +71,8 @@ class FavoriteFragment : Fragment(), LoadFavCallback {
         handlerThread.start()
         val handler = Handler(handlerThread.looper)
         myObserver = DataObserver(handler, context)
+
+
         context?.contentResolver?.registerContentObserver(CONTENT_URI, true, myObserver)
 
         recycler_view.adapter = favAdapter
@@ -130,9 +132,12 @@ class FavoriteFragment : Fragment(), LoadFavCallback {
 
         override fun onChange(selfChange: Boolean) {
             super.onChange(selfChange)
-            if (context != null) {
-                LoadFavAsyn(context, context as LoadFavCallback).execute()
-            }
+//            if (context != null) {
+//                val fragment: LoadFavCallback? = context
+//                if (fragment != null) {
+//                    LoadFavAsyn(context, fragment).execute()
+//                }
+//            }
         }
     }
 }

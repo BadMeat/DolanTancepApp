@@ -99,11 +99,11 @@ class TvFragment : Fragment(), SearchView.OnQueryTextListener {
     }
 
     override fun onQueryTextChange(newText: String?): Boolean {
-        progress_bar.visible()
-        if (newText != null) {
-            setTv("en-US", newText)
-        }
-        return true
+//        progress_bar.visible()
+//        if (newText != null) {
+//            setTv("en-US", newText)
+//        }
+        return false
     }
 
     private fun setTv(language: String, title: String) {

@@ -9,7 +9,7 @@ import com.dolan.dolantancepapp.db.DatabaseContract.Companion.TABLE_FAV
 
 class FavoriteHelper(ctx: Context?) {
 
-    private var databaseHelper: DatabaseHelper? = null
+    private var databaseHelper: DatabaseHelper? = DatabaseHelper(ctx)
     private var database: SQLiteDatabase? = null
 
     companion object {
