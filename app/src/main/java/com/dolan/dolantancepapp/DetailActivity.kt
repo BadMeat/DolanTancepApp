@@ -1,8 +1,9 @@
 package com.dolan.dolantancepapp
 
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.ContentValues
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -16,6 +17,7 @@ import com.dolan.dolantancepapp.db.DatabaseContract.Companion.RATE
 import com.dolan.dolantancepapp.db.DatabaseContract.Companion.TITLE
 import com.dolan.dolantancepapp.detail.DetailResponse
 import com.dolan.dolantancepapp.detail.DetailViewModel
+import com.dolan.dolantancepapp.favorite.FavoriteWidget
 import kotlinx.android.synthetic.main.activity_detail.*
 
 class DetailActivity : AppCompatActivity() {
@@ -61,11 +63,43 @@ class DetailActivity : AppCompatActivity() {
                 values.put(DATE, detailList[0].firstAirDate)
                 values.put(RATE, detailList[0].voteAverage)
                 values.put(POSTER, detailList[0].posterPath)
-                Log.d("Values", "$values")
                 contentResolver?.insert(CONTENT_URI, values)
+
                 Toast.makeText(
                     baseContext,
                     resources.getString(R.string.save_succes),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            R.id.menu_notice -> {
+                val appWidget = AppWidgetManager.getInstance(this)
+                val ids = appWidget.getAppWidgetIds(
+                    ComponentName(
+                        baseContext!!,
+                        FavoriteWidget::class.java
+                    )
+                )
+
+                appWidget.notifyAppWidgetViewDataChanged(ids, R.id.stack_view)
+//                val myWidget = FavoriteWidget()
+//                myWidget.onUpdate(baseContext, appWidget, ids)
+
+//                appWidget.updateAppWidget(thisWidget, views)
+
+                /**
+                 * Terpanggil onreceive
+                 */
+//                val intent = Intent(this, FavoriteWidget::class.java)
+//                intent.action = FavoriteWidget.TOAST_ACTION
+//                val ids = AppWidgetManager.getInstance(baseContext)
+//                    .getAppWidgetIds(ComponentName(application!!, FavoriteWidget::class.java))
+//                Log.d("IDSKU ", "$ids")
+//                intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
+//                sendBroadcast(intent)
+
+                Toast.makeText(
+                    baseContext,
+                    "Kasih tau bang",
                     Toast.LENGTH_SHORT
                 ).show()
             }

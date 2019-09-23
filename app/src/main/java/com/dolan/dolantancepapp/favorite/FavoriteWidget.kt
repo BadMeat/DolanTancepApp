@@ -46,11 +46,12 @@ class FavoriteWidget : AppWidgetProvider() {
             appWidgetId: Int
         ) {
 
-            Log.d("FavoriteTemp Widget", "Masuk Siniiii")
 
             val intent = Intent(context, StackWidgetService::class.java)
             intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
             intent.data = Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME))
+
+            Log.d("Package nameee", context.packageName)
 
             val views = RemoteViews(context.packageName, R.layout.favorite_widget)
             views.setRemoteAdapter(R.id.stack_view, intent)
@@ -68,7 +69,6 @@ class FavoriteWidget : AppWidgetProvider() {
                 PendingIntent.FLAG_UPDATE_CURRENT
             )
             views.setPendingIntentTemplate(R.id.stack_view, toastPending)
-
             appWidgetManager.updateAppWidget(appWidgetId, views)
         }
     }

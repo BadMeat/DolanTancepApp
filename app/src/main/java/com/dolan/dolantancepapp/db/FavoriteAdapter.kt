@@ -1,12 +1,15 @@
 package com.dolan.dolantancepapp.db
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.dolan.dolantancepapp.BuildConfig
 import com.dolan.dolantancepapp.R
+import com.squareup.picasso.Picasso
 
 class FavoriteAdapter : RecyclerView.Adapter<FavoriteAdapter.FavoriteHolder>() {
 
@@ -45,6 +48,7 @@ class FavoriteAdapter : RecyclerView.Adapter<FavoriteAdapter.FavoriteHolder>() {
             txtTitle.text = e.title
             txtDate.text = e.date
             txtRate.text = e.rate.toString()
+            Picasso.get().load("${BuildConfig.BASE_IMAGE}${e.poster}").into(imgPoster)
             itemView.setOnClickListener(
                 CustomItemClicked(
                     position,

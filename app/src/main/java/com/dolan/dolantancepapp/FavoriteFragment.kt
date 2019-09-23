@@ -46,7 +46,6 @@ class FavoriteFragment : Fragment(), LoadFavCallback {
         } else {
             Toast.makeText(context, "Cursor Kosong", Toast.LENGTH_SHORT).show()
         }
-
     }
 
     private lateinit var viewModel: FavoriteViewModel
@@ -132,12 +131,12 @@ class FavoriteFragment : Fragment(), LoadFavCallback {
 
         override fun onChange(selfChange: Boolean) {
             super.onChange(selfChange)
-//            if (context != null) {
-//                val fragment: LoadFavCallback? = context
-//                if (fragment != null) {
-//                    LoadFavAsyn(context, fragment).execute()
-//                }
-//            }
+            if (context != null) {
+                val fragment: LoadFavCallback? = context as LoadFavCallback
+                if (fragment != null) {
+                    LoadFavAsyn(context, fragment).execute()
+                }
+            }
         }
     }
 }
