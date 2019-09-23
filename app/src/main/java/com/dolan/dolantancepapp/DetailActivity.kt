@@ -18,6 +18,7 @@ import com.dolan.dolantancepapp.db.DatabaseContract.Companion.TITLE
 import com.dolan.dolantancepapp.detail.DetailResponse
 import com.dolan.dolantancepapp.detail.DetailViewModel
 import com.dolan.dolantancepapp.favorite.FavoriteWidget
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_detail.*
 
 class DetailActivity : AppCompatActivity() {
@@ -65,13 +66,6 @@ class DetailActivity : AppCompatActivity() {
                 values.put(POSTER, detailList[0].posterPath)
                 contentResolver?.insert(CONTENT_URI, values)
 
-                Toast.makeText(
-                    baseContext,
-                    resources.getString(R.string.save_succes),
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-            R.id.menu_notice -> {
                 val appWidget = AppWidgetManager.getInstance(this)
                 val ids = appWidget.getAppWidgetIds(
                     ComponentName(
@@ -79,27 +73,11 @@ class DetailActivity : AppCompatActivity() {
                         FavoriteWidget::class.java
                     )
                 )
-
                 appWidget.notifyAppWidgetViewDataChanged(ids, R.id.stack_view)
-//                val myWidget = FavoriteWidget()
-//                myWidget.onUpdate(baseContext, appWidget, ids)
-
-//                appWidget.updateAppWidget(thisWidget, views)
-
-                /**
-                 * Terpanggil onreceive
-                 */
-//                val intent = Intent(this, FavoriteWidget::class.java)
-//                intent.action = FavoriteWidget.TOAST_ACTION
-//                val ids = AppWidgetManager.getInstance(baseContext)
-//                    .getAppWidgetIds(ComponentName(application!!, FavoriteWidget::class.java))
-//                Log.d("IDSKU ", "$ids")
-//                intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
-//                sendBroadcast(intent)
 
                 Toast.makeText(
                     baseContext,
-                    "Kasih tau bang",
+                    resources.getString(R.string.save_succes),
                     Toast.LENGTH_SHORT
                 ).show()
             }
@@ -112,5 +90,6 @@ class DetailActivity : AppCompatActivity() {
         txt_date.text = detail.firstAirDate
         txt_rate.text = detail.voteAverage.toString()
         txt_descs.text = detail.overview
+        Picasso.get().load("${BuildConfig.BASE_IMAGE}$detail.posterPath").into(img_poster)
     }
 }

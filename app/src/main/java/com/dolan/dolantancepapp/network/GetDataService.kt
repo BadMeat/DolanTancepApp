@@ -1,6 +1,7 @@
 package com.dolan.dolantancepapp.network
 
 import com.dolan.dolantancepapp.BuildConfig
+import com.dolan.dolantancepapp.alarm.ResponseTvRelase
 import com.dolan.dolantancepapp.detail.DetailResponse
 import com.dolan.dolantancepapp.tv.TvResponse
 import io.reactivex.Observable
@@ -22,4 +23,10 @@ interface GetDataService {
         @Path("id", encoded = true) id: Int,
         @Query("language") language: String? = "en-US"
     ): Observable<Response<DetailResponse>>
+
+    @GET("${BuildConfig.BASE_URL}discover/tv?api_key=${BuildConfig.API_KEY}")
+    fun getTvRelease(
+        @Query("primary_release_date.gte") todayGte: String?,
+        @Query("primary_release_date.lte") todayLte: String?
+    ): Observable<Response<ResponseTvRelase>>
 }

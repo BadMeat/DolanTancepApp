@@ -1,8 +1,8 @@
 package com.dolan.dolantancepapp.db
 
-import android.appwidget.AppWidgetManager
-import android.content.*
 import android.content.ContentProvider
+import android.content.ContentValues
+import android.content.UriMatcher
 import android.database.Cursor
 import android.net.Uri
 import android.os.Handler
@@ -10,10 +10,6 @@ import com.dolan.dolantancepapp.FavoriteFragment
 import com.dolan.dolantancepapp.db.DatabaseContract.Companion.AUTH
 import com.dolan.dolantancepapp.db.DatabaseContract.Companion.CONTENT_URI
 import com.dolan.dolantancepapp.db.DatabaseContract.Companion.TABLE_FAV
-import com.dolan.dolantancepapp.favorite.FavoriteWidget
-import com.dolan.dolantancepapp.favorite.FavoriteWidget.Companion.TOAST_ACTION
-import com.dolan.dolantancepapp.favorite.StackRemoteViewFactory
-import com.dolan.dolantancepapp.favorite.StackWidgetService
 
 class ContentProvider : ContentProvider() {
 

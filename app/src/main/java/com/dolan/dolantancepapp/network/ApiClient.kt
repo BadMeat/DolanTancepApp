@@ -1,6 +1,7 @@
 package com.dolan.dolantancepapp.network
 
 import com.dolan.dolantancepapp.BuildConfig
+import com.dolan.dolantancepapp.alarm.ResponseTvRelase
 import com.dolan.dolantancepapp.detail.DetailResponse
 import com.dolan.dolantancepapp.tv.TvResponse
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
@@ -41,5 +42,9 @@ class ApiClient {
 
     fun getTvDetail(id: Int, language: String?): Observable<Response<DetailResponse>> {
         return data.getTvDetail(id, language)
+    }
+
+    fun getTvRelase(dateGte: String, dateLte: String?): Observable<Response<ResponseTvRelase>> {
+        return data.getTvRelease(dateGte, dateLte)
     }
 }

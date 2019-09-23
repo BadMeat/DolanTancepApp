@@ -8,6 +8,7 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.Navigation
 import androidx.navigation.ui.setupWithNavController
+import com.dolan.dolantancepapp.alarm.SettingActivity
 import com.dolan.dolantancepapp.db.LoadFavCallback
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -36,7 +37,7 @@ class MainActivity : AppCompatActivity(), LoadFavCallback {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
             R.id.menu_setting -> {
-                startActivity(Intent(this, DetailActivity::class.java))
+                startActivity(Intent(this, SettingActivity::class.java))
             }
         }
         return super.onOptionsItemSelected(item)
