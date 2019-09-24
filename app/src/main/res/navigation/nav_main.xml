@@ -7,17 +7,17 @@
 
     <fragment
         android:id="@+id/menu_tv"
-        android:name="com.dolan.dolantancepapp.TvFragment"
+        android:name="com.dolan.dolantancepapp.tv.TvFragment"
         android:label="fragment_tv"
         tools:layout="@layout/fragment_tv" />
     <fragment
         android:id="@+id/menu_movie"
-        android:name="com.dolan.dolantancepapp.MovieFragment"
+        android:name="com.dolan.dolantancepapp.movie.MovieFragment"
         android:label="fragment_movie"
         tools:layout="@layout/fragment_movie" />
     <fragment
         android:id="@+id/menu_fav"
-        android:name="com.dolan.dolantancepapp.FavoriteFragment"
+        android:name="com.dolan.dolantancepapp.favorite.FavoriteFragment"
         android:label="fragment_favorite"
         tools:layout="@layout/fragment_favorite" />
 </navigation>

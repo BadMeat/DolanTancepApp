@@ -2,7 +2,9 @@ package com.dolan.dolantancepapp.network
 
 import com.dolan.dolantancepapp.BuildConfig
 import com.dolan.dolantancepapp.alarm.ResponseTvRelase
-import com.dolan.dolantancepapp.detail.DetailResponse
+import com.dolan.dolantancepapp.detail.DetailMovie
+import com.dolan.dolantancepapp.detail.DetailTv
+import com.dolan.dolantancepapp.movie.ResponseMovie
 import com.dolan.dolantancepapp.tv.TvResponse
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import io.reactivex.Observable
@@ -36,15 +38,29 @@ class ApiClient {
         data = retro.create(GetDataService::class.java)
     }
 
-    fun getTvSearch(language: String?, title: String): Observable<Response<TvResponse>> {
-        return data.getMovieList(language, title)
+    /**
+     * TV
+     */
+    fun getTvSearch(language: String?, title: String?): Observable<Response<TvResponse>> {
+        return data.getTvList(language, title)
     }
 
-    fun getTvDetail(id: Int, language: String?): Observable<Response<DetailResponse>> {
+    fun getTvDetail(id: Int, language: String?): Observable<Response<DetailTv>> {
         return data.getTvDetail(id, language)
     }
 
-    fun getTvRelase(dateGte: String, dateLte: String?): Observable<Response<ResponseTvRelase>> {
+    fun getTvRelease(dateGte: String, dateLte: String?): Observable<Response<ResponseTvRelase>> {
         return data.getTvRelease(dateGte, dateLte)
+    }
+
+    /**
+     * Movie
+     */
+    fun getMovieSearch(language: String?, title: String?): Observable<Response<ResponseMovie>> {
+        return data.getMovieList(language, title)
+    }
+
+    fun getMovieDetail(id: Int, language: String?): Observable<Response<DetailMovie>> {
+        return data.getMovieDetail(id, language)
     }
 }

@@ -15,11 +15,10 @@ class SettingActivity : AppCompatActivity() {
 
         sw_daily.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
-                reminderService.setDailyRepeat(
+                reminderService.setDaily(
                     baseContext,
                     "Dolan Tancep",
-                    "Haloo yuk cari cari film",
-                    TvReminderService.ACTION_DAILY
+                    "Haloo yuk cari cari film"
                 )
             }
         }

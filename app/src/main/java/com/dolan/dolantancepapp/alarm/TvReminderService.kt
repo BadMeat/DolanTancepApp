@@ -51,7 +51,7 @@ class TvReminderService : BroadcastReceiver() {
 
         val tvList = mutableListOf<ResultsItem?>()
 
-        ApiClient.instance.getTvRelase(format.format(today), format.format(today))
+        ApiClient.instance.getTvRelease(format.format(today), format.format(today))
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
             .map {
@@ -59,14 +59,13 @@ class TvReminderService : BroadcastReceiver() {
             }
             .doFinally {
                 for (i: ResultsItem? in tvList) {
-                    showPushReleaseNotification(ctx, tvList)
+                    showRelease(ctx, tvList)
                 }
                 val sharedPreferences = ctx?.getSharedPreferences(COUNTER, MODE_PRIVATE)
                 sharedPreferences?.edit()?.putInt(COUNTER, 0)?.apply()
             }
             .subscribe(
                 { result ->
-                    Log.d("RESULTNYACINGCAAAW", "$result")
                     if (result != null) {
                         tvList.addAll(result)
                     }
@@ -77,30 +76,30 @@ class TvReminderService : BroadcastReceiver() {
 
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        Log.d("ONRECEIVERRERR", "MASUK SINI ODNG")
         val title = intent?.getStringExtra(EXTRA_TITLE)
         val message = intent?.getStringExtra(EXTRA_MESSAGE)
-        Log.d("ACTIONRECEIVER", intent?.action)
         when (intent?.action) {
             Intent.ACTION_BOOT_COMPLETED -> {
-                showPushNotification(context, title, message)
+                showDaily(context, title, message)
+            }
+            ACTION_DAILY -> {
+                showDaily(context, title, message)
             }
             ACTION_RELEASE -> {
                 getData(context)
             }
             else -> {
-//                showPushNotification(context, title, message)
-                getData(context)
+                showDaily(context, title, message)
             }
         }
     }
 
-    fun setDailyRepeat(ctx: Context?, title: String?, message: String?, action: String) {
+    fun setDaily(ctx: Context?, title: String?, message: String?) {
         val alarmManager = ctx?.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(ctx, TvReminderService::class.java)
         intent.putExtra(EXTRA_TITLE, title)
         intent.putExtra(EXTRA_MESSAGE, message)
-        intent.action = action
+        intent.action = ACTION_DAILY
         val pendingIntent =
             PendingIntent.getBroadcast(ctx, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         val calendar = Calendar.getInstance()
@@ -108,7 +107,7 @@ class TvReminderService : BroadcastReceiver() {
         val month = calendar.get(Calendar.MONTH)
         val day = calendar.get(Calendar.DAY_OF_MONTH)
         val hour = calendar.get(Calendar.HOUR_OF_DAY)
-        val minute = 27
+        val minute = 50
         calendar.set(year, month, day, hour, minute, 0)
 
         alarmManager.setInexactRepeating(
@@ -129,13 +128,13 @@ class TvReminderService : BroadcastReceiver() {
         val intent = Intent(ctx, TvReminderService::class.java)
         intent.action = ACTION_RELEASE
         val pendingIntent =
-            PendingIntent.getActivity(ctx, 9, intent, 0)
+            PendingIntent.getBroadcast(ctx, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH)
         val day = calendar.get(Calendar.DAY_OF_MONTH)
         val hour = calendar.get(Calendar.HOUR_OF_DAY)
-        val minute = 7
+        val minute = 50
         calendar.set(year, month, day, hour, minute, 0)
 
         alarmManager.setInexactRepeating(
@@ -144,12 +143,13 @@ class TvReminderService : BroadcastReceiver() {
             AlarmManager.INTERVAL_DAY,
             pendingIntent
         )
-        Log.d("ALARMSETON", "${calendar.time}")
-        Toast.makeText(ctx, "Alarm Release Set On ${calendar.timeInMillis}", Toast.LENGTH_SHORT)
-            .show()
+
+        val sharedPreferences = ctx.getSharedPreferences(COUNTER, MODE_PRIVATE)
+        sharedPreferences?.edit()?.putInt(COUNTER, 0)?.apply()
+        Toast.makeText(ctx, ctx.resources.getString(R.string.alarm_set), Toast.LENGTH_SHORT).show()
     }
 
-    private fun showPushReleaseNotification(ctx: Context?, tvRelease: List<ResultsItem?>) {
+    private fun showRelease(ctx: Context?, tvRelease: List<ResultsItem?>) {
         val notificationManager =
             ctx?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
@@ -164,7 +164,6 @@ class TvReminderService : BroadcastReceiver() {
 
         val sharedPreferences = ctx.getSharedPreferences(COUNTER, MODE_PRIVATE)
         var counter = sharedPreferences.getInt(COUNTER, 0)
-        Log.d("COUNTERKUU========", "$counter")
 
         val notificationBuilder = NotificationCompat.Builder(ctx, CHANNEL_NAME)
             .setContentTitle(tvRelease[counter]?.name)
@@ -200,7 +199,7 @@ class TvReminderService : BroadcastReceiver() {
     }
 
 
-    private fun showPushNotification(ctx: Context?, title: String?, message: String?) {
+    private fun showDaily(ctx: Context?, title: String?, message: String?) {
         val notificationManager =
             ctx?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 

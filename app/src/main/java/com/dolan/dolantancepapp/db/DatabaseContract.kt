@@ -12,6 +12,7 @@ class DatabaseContract {
         const val DATE = "FAV_DATE"
         const val RATE = "FAV_RATE"
         const val POSTER = "FAV_POSTER"
+        const val TYPE = "FAV_TYPE"
 
 
         const val AUTH = "com.dolan.dolantancepapp"
@@ -28,6 +29,10 @@ class DatabaseContract {
 
         fun getColumnString(cursor: Cursor?, columnName: String?): String? {
             return cursor?.getString(cursor.getColumnIndexOrThrow(columnName))
+        }
+
+        fun getColumnDouble(cursor: Cursor?, columnName: String?): Double? {
+            return cursor?.getDouble(cursor.getColumnIndexOrThrow(columnName))
         }
     }
 }

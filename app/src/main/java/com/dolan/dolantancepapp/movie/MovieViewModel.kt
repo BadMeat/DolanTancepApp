@@ -1,4 +1,4 @@
-package com.dolan.dolantancepapp.tv
+package com.dolan.dolantancepapp.movie
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
@@ -8,36 +8,38 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 
-class TvViewModel : ViewModel() {
+class MovieViewModel : ViewModel() {
 
-    private val listTv: MutableLiveData<MutableList<ResultsItem?>> = MutableLiveData()
-
+    private val movieList = MutableLiveData<MutableList<Movie?>>()
     private var disposable: Disposable? = null
 
-    fun getTv(language: String?, title: String?) {
-        val item = mutableListOf<ResultsItem?>()
-        disposable = ApiClient.instance.getTvSearch(language, title)
+    fun getData(language: String?, title: String?) {
+
+        val movie = mutableListOf<Movie?>()
+
+        disposable = ApiClient.instance.getMovieSearch(language, title)
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
             .map {
                 it.body()?.results
             }
             .doFinally {
-                listTv.postValue(item)
+                movieList.postValue(movie)
             }
             .subscribe(
                 { result ->
                     if (result != null) {
-                        item.addAll(result.toMutableList())
+                        movie.addAll(result)
                     }
                 },
-                { error -> Log.e("Error Response", "$error") }
+                { error -> Log.e("Eror Rquest Movie", "$error") }
             )
     }
 
-    fun getTvList() = listTv
-
-    fun disposableClose() {
+    fun closeDispose() {
         disposable?.dispose()
     }
+
+    fun getMovieList() = movieList
+
 }

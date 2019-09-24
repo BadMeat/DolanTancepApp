@@ -1,37 +1,35 @@
-package com.dolan.dolantancepapp
+package com.dolan.dolantancepapp.favorite
 
 
 import android.content.Context
+import android.content.Intent
 import android.database.ContentObserver
 import android.database.Cursor
 import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.GridLayoutManager
-import com.dolan.dolantancepapp.database.FavoriteViewModel
+import com.dolan.dolantancepapp.R
 import com.dolan.dolantancepapp.db.DatabaseContract.Companion.CONTENT_URI
-import com.dolan.dolantancepapp.db.Favorite
-import com.dolan.dolantancepapp.db.FavoriteAdapter
 import com.dolan.dolantancepapp.db.LoadFavCallback
 import com.dolan.dolantancepapp.db.MappingHelper.Companion.mapCursorToArrayList
+import com.dolan.dolantancepapp.detail.DetailActivity
+import com.dolan.dolantancepapp.invisible
+import com.dolan.dolantancepapp.visible
 import kotlinx.android.synthetic.main.fragment_favorite.*
 import java.lang.ref.WeakReference
 
 class FavoriteFragment : Fragment(), LoadFavCallback {
 
-    companion object {
-        const val EXTRA_STATE = "EXTRA_STATE"
-    }
-
     override fun preExecute() {
-
+        progress_bar.visible()
     }
 
     override fun postExecute(cursor: Cursor?) {
@@ -41,17 +39,17 @@ class FavoriteFragment : Fragment(), LoadFavCallback {
                 favAdapter.setFavList(listFav)
             } else {
                 favAdapter.setFavList(mutableListOf())
-                Toast.makeText(context, "Data Kosong", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    resources.getString(R.string.data_kosong),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
-        } else {
-            Toast.makeText(context, "Cursor Kosong", Toast.LENGTH_SHORT).show()
+            progress_bar.invisible()
         }
     }
 
-    private lateinit var viewModel: FavoriteViewModel
     private lateinit var favAdapter: FavoriteAdapter
-
-    private val favList: MutableList<Favorite> = mutableListOf()
     private lateinit var handlerThread: HandlerThread
     private lateinit var myObserver: ContentObserver
 
@@ -65,41 +63,29 @@ class FavoriteFragment : Fragment(), LoadFavCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        favAdapter = FavoriteAdapter()
+        favAdapter = FavoriteAdapter {
+            val intent = Intent(context, DetailActivity::class.java)
+            val type = when (it.type) {
+                1 -> DetailActivity.EXTRA_TV
+                else -> DetailActivity.EXTRA_MOVIE
+            }
+            Log.d("MYTYPEEE", "${it.type}")
+            intent.putExtra(DetailActivity.EXTRA_TYPE, type)
+            intent.putExtra(DetailActivity.EXTRA_DETAIL_ID, it.id)
+            startActivity(intent)
+        }
         handlerThread = HandlerThread("DataObserver")
         handlerThread.start()
         val handler = Handler(handlerThread.looper)
-        myObserver = DataObserver(handler, context)
-
+        myObserver =
+            DataObserver(handler, context)
 
         context?.contentResolver?.registerContentObserver(CONTENT_URI, true, myObserver)
 
         recycler_view.adapter = favAdapter
         recycler_view.layoutManager = GridLayoutManager(context, 2)
 
-
-        if (savedInstanceState == null) {
-            if (context != null) {
-                LoadFavAsyn(context!!, this).execute()
-            }
-        } else {
-            val list: List<Favorite>? = savedInstanceState.getParcelableArrayList(EXTRA_STATE)
-            if (list != null) {
-                favAdapter.setFavList(list)
-            }
-        }
-
-//        viewModel = ViewModelProviders.of(this).get(FavoriteViewModel::class.java)
-//        viewModel.getFavoriteData().observe(this, getFavorite)
-//        viewModel.getFavoriteData(context!!)
-    }
-
-    private val getFavorite = Observer<MutableList<Favorite>> {
-        if (it != null) {
-            favList.clear()
-            favList.addAll(it)
-            favAdapter.notifyDataSetChanged()
-        }
+        LoadFavAsyn(context!!, this).execute()
     }
 
     class LoadFavAsyn(
@@ -134,7 +120,10 @@ class FavoriteFragment : Fragment(), LoadFavCallback {
             if (context != null) {
                 val fragment: LoadFavCallback? = context as LoadFavCallback
                 if (fragment != null) {
-                    LoadFavAsyn(context, fragment).execute()
+                    LoadFavAsyn(
+                        context,
+                        fragment
+                    ).execute()
                 }
             }
         }

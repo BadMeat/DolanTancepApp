@@ -1,4 +1,4 @@
-package com.dolan.dolantancepapp.tv
+package com.dolan.dolantancepapp.movie
 
 import android.view.LayoutInflater
 import android.view.View
@@ -10,23 +10,21 @@ import com.dolan.dolantancepapp.BuildConfig
 import com.dolan.dolantancepapp.R
 import com.squareup.picasso.Picasso
 
-class TvAdapter(
-    private val listener: (ResultsItem) -> Unit
-) :
-    RecyclerView.Adapter<TvAdapter.TvHolder>() {
+class MovieAdapter(private val listener: (Movie?) -> Unit) :
+    RecyclerView.Adapter<MovieAdapter.MovieHolder>() {
 
-    private val tvList = mutableListOf<ResultsItem?>()
+    private val movieList = mutableListOf<Movie?>()
 
-    fun setTvList(e: List<ResultsItem?>) {
-        tvList.clear()
+    fun setMovieList(e: List<Movie?>) {
+        movieList.clear()
         if (e.isNotEmpty()) {
-            tvList.addAll(e)
+            movieList.addAll(e)
         }
         notifyDataSetChanged()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TvHolder {
-        return TvHolder(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieHolder {
+        return MovieHolder(
             LayoutInflater.from(parent.context).inflate(
                 R.layout.data_item,
                 parent,
@@ -35,28 +33,28 @@ class TvAdapter(
         )
     }
 
-    override fun getItemCount() = tvList.size
+    override fun getItemCount() = movieList.size
 
-    override fun onBindViewHolder(holder: TvHolder, position: Int) {
-        holder.bindItem(tvList[position]!!, listener)
+    override fun onBindViewHolder(holder: MovieHolder, position: Int) {
+        holder.bindItem(movieList[position], listener)
     }
 
-    class TvHolder(view: View) : RecyclerView.ViewHolder(view) {
-
-        private val imgPoster: ImageView = view.findViewById(R.id.img_poster)
+    class MovieHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val txtTitle: TextView = view.findViewById(R.id.txt_title)
         private val txtDate: TextView = view.findViewById(R.id.txt_date)
         private val txtRate: TextView = view.findViewById(R.id.txt_rate)
+        private val imgPoster: ImageView = view.findViewById(R.id.img_poster)
 
-        fun bindItem(e: ResultsItem, listener: (ResultsItem) -> Unit) {
-            txtTitle.text = e.name
-            txtDate.text = e.firstAirDate
-            txtRate.text = e.voteAverage.toString()
-            if (e.posterPath != null) {
+        fun bindItem(e: Movie?, listener: (Movie?) -> Unit) {
+            txtTitle.text = e?.title
+            txtDate.text = e?.releaseDate
+            txtRate.text = e?.voteAverage.toString()
+            if (e?.posterPath != null) {
                 Picasso.get().load("${BuildConfig.BASE_IMAGE}${e.posterPath}").into(imgPoster)
             } else {
                 Picasso.get().load(R.drawable.noimage_rv).into(imgPoster)
             }
+
             itemView.setOnClickListener {
                 listener(e)
             }

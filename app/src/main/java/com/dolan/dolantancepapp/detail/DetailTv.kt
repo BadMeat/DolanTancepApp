@@ -2,7 +2,7 @@ package com.dolan.dolantancepapp.detail
 
 import com.google.gson.annotations.SerializedName
 
-data class DetailResponse(
+data class DetailTv(
 	val id: Int? = null,
 	@SerializedName("first_air_date")
 	val firstAirDate: String? = null,

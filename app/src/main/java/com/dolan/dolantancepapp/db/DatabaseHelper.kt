@@ -9,6 +9,7 @@ import com.dolan.dolantancepapp.db.DatabaseContract.Companion.POSTER
 import com.dolan.dolantancepapp.db.DatabaseContract.Companion.RATE
 import com.dolan.dolantancepapp.db.DatabaseContract.Companion.TABLE_FAV
 import com.dolan.dolantancepapp.db.DatabaseContract.Companion.TITLE
+import com.dolan.dolantancepapp.db.DatabaseContract.Companion.TYPE
 
 class DatabaseHelper(ctx: Context?) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VERSION) {
     override fun onCreate(db: SQLiteDatabase?) {
@@ -28,7 +29,8 @@ class DatabaseHelper(ctx: Context?) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VE
                 "$TITLE TEXT," +
                 "$DATE TEXT," +
                 "$RATE REAL," +
-                "$POSTER TEXT" +
+                "$POSTER TEXT," +
+                "$TYPE INTEGER" +
                 ")"
     }
 
