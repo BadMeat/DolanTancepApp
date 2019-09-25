@@ -22,10 +22,10 @@ class DatabaseHelper(ctx: Context?) : SQLiteOpenHelper(ctx, DB_NAME, null, DB_VE
 
     companion object {
         const val DB_NAME = "favdb"
-        const val DB_VERSION = 1
+        const val DB_VERSION = 2
 
         const val DB_QUERY_FAV = "CREATE TABLE $TABLE_FAV(" +
-                "$_ID INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "$_ID INTEGER PRIMARY KEY," +
                 "$TITLE TEXT," +
                 "$DATE TEXT," +
                 "$RATE REAL," +

@@ -3,7 +3,14 @@ package com.dolan.dolantancepapp.detail
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.ContentValues
+import android.content.Context
+import android.database.ContentObserver
+import android.database.Cursor
+import android.os.AsyncTask
 import android.os.Bundle
+import android.os.Handler
+import android.os.HandlerThread
+import android.provider.BaseColumns._ID
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -19,18 +26,40 @@ import com.dolan.dolantancepapp.db.DatabaseContract.Companion.POSTER
 import com.dolan.dolantancepapp.db.DatabaseContract.Companion.RATE
 import com.dolan.dolantancepapp.db.DatabaseContract.Companion.TITLE
 import com.dolan.dolantancepapp.db.DatabaseContract.Companion.TYPE
+import com.dolan.dolantancepapp.db.DatabaseContract.Companion.getContentId
+import com.dolan.dolantancepapp.db.LoadFavCallback
+import com.dolan.dolantancepapp.db.MappingHelper
 import com.dolan.dolantancepapp.favorite.FavoriteWidget
 import com.dolan.dolantancepapp.invisible
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_detail.*
+import java.lang.ref.WeakReference
 
-class DetailActivity : AppCompatActivity() {
+class DetailActivity : AppCompatActivity(), LoadFavCallback {
+
+    override fun preExecute() {
+
+    }
+
+    override fun postExecute(cursor: Cursor?) {
+        val list = MappingHelper.mapCursorToArrayList(cursor)
+        if (list.isNotEmpty()) {
+            isFavorited = !isFavorited
+        }
+    }
 
     private lateinit var detailViewModel: DetailViewModel
 
     private val detailTvList = mutableListOf<DetailTv>()
     private val detailMovieList = mutableListOf<DetailMovie>()
     private var detailCode = ""
+
+    private lateinit var myDataObserver: ContentObserver
+    private lateinit var threadHandler: HandlerThread
+
+    private var isFavorited = false
+
+    private var myMenu: Menu? = null
 
     companion object {
         const val EXTRA_DETAIL_ID = "EXTRA_DETAIL_ID"
@@ -42,13 +71,21 @@ class DetailActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_favorite, menu)
+        myMenu = menu
+        setFavorited()
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_detail)
+
+        threadHandler = HandlerThread("DetailDataObserver")
+        threadHandler.start()
+        val handler = Handler(threadHandler.looper)
+        myDataObserver = DataObserver(handler, this)
+        contentResolver?.registerContentObserver(CONTENT_URI, true, myDataObserver)
+
         detailCode = intent.getStringExtra(EXTRA_TYPE)
         val id = intent.getIntExtra(EXTRA_DETAIL_ID, 0)
 
@@ -56,14 +93,14 @@ class DetailActivity : AppCompatActivity() {
         detailViewModel = ViewModelProviders.of(this).get(DetailViewModel::class.java)
 
         if (detailCode.equals(EXTRA_TV, true)) {
-            Log.e("MOVIE","MASUK TV DONG")
             detailViewModel.getTvDetailList().observe(this, detailTvModel)
             detailViewModel.getTvData(id, "en-US")
         } else if (detailCode.equals(EXTRA_MOVIE, true)) {
-            Log.e("MOVIE","MASUK MOVIE DONG")
             detailViewModel.getMovieDetailList().observe(this, detailMovieModel)
             detailViewModel.getMovieData(id, "en-US")
         }
+
+        LoadDetail(baseContext, this).execute("$id")
     }
 
     private val detailTvModel = Observer<DetailTv> {
@@ -111,6 +148,7 @@ class DetailActivity : AppCompatActivity() {
                 }
             }
         }
+        setFavorited()
         return super.onOptionsItemSelected(item)
     }
 
@@ -142,6 +180,7 @@ class DetailActivity : AppCompatActivity() {
             1 -> {
                 @Suppress("UNCHECKED_CAST")
                 val tvList = list as MutableList<DetailTv>
+                values.put(_ID, tvList[0].id)
                 values.put(TITLE, tvList[0].name)
                 values.put(DATE, tvList[0].firstAirDate)
                 values.put(RATE, tvList[0].voteAverage)
@@ -151,6 +190,7 @@ class DetailActivity : AppCompatActivity() {
             2 -> {
                 @Suppress("UNCHECKED_CAST")
                 val movieList = list as MutableList<DetailMovie>
+                values.put(_ID, movieList[0].id)
                 values.put(TITLE, movieList[0].title)
                 values.put(DATE, movieList[0].releaseDate)
                 values.put(RATE, movieList[0].voteAverage)
@@ -183,6 +223,60 @@ class DetailActivity : AppCompatActivity() {
         super.onDestroy()
         if (::detailViewModel.isInitialized) {
             detailViewModel.close()
+        }
+    }
+
+    class LoadDetail(
+        ctx: Context,
+        loadCallBack: LoadFavCallback
+    ) : AsyncTask<String, Void, Cursor?>() {
+
+        private val weakContext = WeakReference(ctx)
+        private val weakLoadCallBack = WeakReference(loadCallBack)
+
+        override fun onPreExecute() {
+            super.onPreExecute()
+            weakLoadCallBack.get()?.preExecute()
+        }
+
+        override fun doInBackground(vararg params: String?): Cursor? {
+            val contexte = weakContext.get()
+            return contexte?.contentResolver?.query(
+                getContentId(params[0]),
+                null,
+                null,
+                null,
+                null
+            )
+        }
+
+        override fun onPostExecute(result: Cursor?) {
+            super.onPostExecute(result)
+            weakLoadCallBack.get()?.postExecute(result)
+        }
+    }
+
+    class DataObserver(handler: Handler, ctx: Context?) : ContentObserver(handler) {
+        val context = ctx
+
+        override fun onChange(selfChange: Boolean) {
+            super.onChange(selfChange)
+            if (context != null) {
+                LoadDetail(
+                    context,
+                    context as DetailActivity
+                ).execute()
+            }
+        }
+    }
+
+    private fun setFavorited() {
+        if (isFavorited) {
+            Log.d("MASUKKK", "MASUKFAVORITEDONG $myMenu")
+            myMenu?.getItem(0)?.icon = resources.getDrawable(R.drawable.ic_favorited, null)
+        } else {
+            Log.d("MASUKKK", "TIDAKMASUKDONG")
+            myMenu?.getItem(0)?.icon = resources.getDrawable(R.drawable.ic_favorite, null)
         }
     }
 }

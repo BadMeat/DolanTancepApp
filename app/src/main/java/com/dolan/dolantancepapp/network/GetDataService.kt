@@ -29,11 +29,11 @@ interface GetDataService {
         @Query("language") language: String? = "en-US"
     ): Observable<Response<DetailTv>>
 
-    @GET("${BuildConfig.BASE_URL}discover/tv?api_key=${BuildConfig.API_KEY}")
-    fun getTvRelease(
+    @GET("${BuildConfig.BASE_URL}discover/movie?api_key=${BuildConfig.API_KEY}")
+    fun getMovieRelease(
         @Query("primary_release_date.gte") todayGte: String?,
         @Query("primary_release_date.lte") todayLte: String?
-    ): Observable<Response<ResponseTvRelase>>
+    ): Observable<Response<ResponseMovie>>
 
     /**
      * Movie

@@ -15,6 +15,7 @@ import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import com.dolan.dolantancepapp.MainActivity
 import com.dolan.dolantancepapp.R
+import com.dolan.dolantancepapp.movie.Movie
 import com.dolan.dolantancepapp.network.ApiClient
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -29,14 +30,18 @@ class TvReminderService : BroadcastReceiver() {
         const val CHANNEL_ID = "tv_id"
 
         const val GROUP_TV = "group_tv"
-        const val ID_NOTIF = 100
+        const val ID_NOTIFICATION = 100
+        const val ID_SUMMARY = 300
 
         const val EXTRA_TITLE = "extra_title"
         const val EXTRA_MESSAGE = "extra_messages"
 
         const val REQUEST_PENDING_MAIN = 0
 
-        const val MAX_REQUEST = 2
+        const val REQUEST_ALARM_DAILY = 101
+        const val REQUEST_ALARM_RELEASE = 201
+
+        const val MAX_REQUEST = 1
         const val ACTION_DAILY = "com.dolan.dolantancepapp.alarm.ACTION_DAILY"
         const val ACTION_RELEASE = "com.dolan.dolantancepapp.alarm.ACTION_RELEASE"
 
@@ -49,18 +54,16 @@ class TvReminderService : BroadcastReceiver() {
         val today = Calendar.getInstance().time
         val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
-        val tvList = mutableListOf<ResultsItem?>()
+        val tvList = mutableListOf<Movie?>()
 
-        ApiClient.instance.getTvRelease(format.format(today), format.format(today))
+        ApiClient.instance.getMovieRelease(format.format(today), format.format(today))
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeOn(Schedulers.io())
             .map {
                 it.body()?.results
             }
             .doFinally {
-                for (i: ResultsItem? in tvList) {
-                    showRelease(ctx, tvList)
-                }
+                showRelease(ctx, tvList)
                 val sharedPreferences = ctx?.getSharedPreferences(COUNTER, MODE_PRIVATE)
                 sharedPreferences?.edit()?.putInt(COUNTER, 0)?.apply()
             }
@@ -78,9 +81,28 @@ class TvReminderService : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         val title = intent?.getStringExtra(EXTRA_TITLE)
         val message = intent?.getStringExtra(EXTRA_MESSAGE)
+
         when (intent?.action) {
             Intent.ACTION_BOOT_COMPLETED -> {
-                showDaily(context, title, message)
+
+                val sharedDaily =
+                    context?.getSharedPreferences(SettingActivity.EXTRA_DAILY, MODE_PRIVATE)
+                val sharedRelease =
+                    context?.getSharedPreferences(SettingActivity.EXTRA_RELEASE, MODE_PRIVATE)
+
+                val daily = sharedDaily?.getBoolean(SettingActivity.EXTRA_DAILY, false)
+                val release = sharedRelease?.getBoolean(SettingActivity.EXTRA_RELEASE, false)
+
+                if (daily != null) {
+                    if (daily) {
+                        showDaily(context, title, message)
+                    }
+                }
+                if (release != null) {
+                    if (release) {
+                        getData(context)
+                    }
+                }
             }
             ACTION_DAILY -> {
                 showDaily(context, title, message)
@@ -101,14 +123,20 @@ class TvReminderService : BroadcastReceiver() {
         intent.putExtra(EXTRA_MESSAGE, message)
         intent.action = ACTION_DAILY
         val pendingIntent =
-            PendingIntent.getBroadcast(ctx, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+            PendingIntent.getBroadcast(
+                ctx,
+                REQUEST_ALARM_DAILY,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH)
         val day = calendar.get(Calendar.DAY_OF_MONTH)
-        val hour = calendar.get(Calendar.HOUR_OF_DAY)
-        val minute = 50
-        calendar.set(year, month, day, hour, minute, 0)
+        val hour = 7
+        val minute = 0
+        val second = 0
+        calendar.set(year, month, day, hour, minute, second)
 
         alarmManager.setInexactRepeating(
             AlarmManager.RTC_WAKEUP,
@@ -128,14 +156,20 @@ class TvReminderService : BroadcastReceiver() {
         val intent = Intent(ctx, TvReminderService::class.java)
         intent.action = ACTION_RELEASE
         val pendingIntent =
-            PendingIntent.getBroadcast(ctx, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+            PendingIntent.getBroadcast(
+                ctx,
+                REQUEST_ALARM_RELEASE,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT
+            )
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
         val month = calendar.get(Calendar.MONTH)
         val day = calendar.get(Calendar.DAY_OF_MONTH)
-        val hour = calendar.get(Calendar.HOUR_OF_DAY)
-        val minute = 50
-        calendar.set(year, month, day, hour, minute, 0)
+        val hour = 8
+        val minute = 0
+        val second = 0
+        calendar.set(year, month, day, hour, minute, second + 10)
 
         alarmManager.setInexactRepeating(
             AlarmManager.RTC_WAKEUP,
@@ -149,7 +183,7 @@ class TvReminderService : BroadcastReceiver() {
         Toast.makeText(ctx, ctx.resources.getString(R.string.alarm_set), Toast.LENGTH_SHORT).show()
     }
 
-    private fun showRelease(ctx: Context?, tvRelease: List<ResultsItem?>) {
+    private fun showRelease(ctx: Context?, tvRelease: List<Movie?>) {
         val notificationManager =
             ctx?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
@@ -162,40 +196,51 @@ class TvReminderService : BroadcastReceiver() {
             PendingIntent.FLAG_UPDATE_CURRENT
         )
 
-        val sharedPreferences = ctx.getSharedPreferences(COUNTER, MODE_PRIVATE)
-        var counter = sharedPreferences.getInt(COUNTER, 0)
+        var counter = 0
 
-        val notificationBuilder = NotificationCompat.Builder(ctx, CHANNEL_NAME)
-            .setContentTitle(tvRelease[counter]?.name)
-            .setContentText(tvRelease[counter]?.overview)
-            .setAutoCancel(true)
-            .setContentIntent(pendingIntent)
-            .setSmallIcon(R.drawable.ic_notif)
-            .setGroup(GROUP_TV)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val notificationChannel = NotificationChannel(
-                CHANNEL_ID,
-                CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_DEFAULT
-            )
-            notificationBuilder.setChannelId(CHANNEL_ID)
-            notificationManager.createNotificationChannel(notificationChannel)
+        val notificationBuilder: NotificationCompat.Builder =
+            NotificationCompat.Builder(ctx, CHANNEL_NAME)
+
+        for (i in tvRelease) {
+            notificationBuilder
+                .setContentTitle(i?.title)
+                .setContentText(i?.overview)
+                .setContentIntent(pendingIntent)
+                .setSmallIcon(R.drawable.ic_notif)
+                .setGroup(GROUP_TV)
+                .setAutoCancel(true)
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val notificationChannel = NotificationChannel(
+                    CHANNEL_ID,
+                    CHANNEL_NAME,
+                    NotificationManager.IMPORTANCE_DEFAULT
+                )
+                notificationBuilder.setChannelId(CHANNEL_ID)
+                notificationManager.createNotificationChannel(notificationChannel)
+            }
+
+            notificationManager.notify(counter, notificationBuilder.build())
+            counter++
         }
 
-        if (counter > MAX_REQUEST) {
+        if (counter > 1) {
             val style = NotificationCompat.InboxStyle()
-            style.addLine("First TV ${tvRelease[counter]?.name}")
-            style.addLine("First TV ${tvRelease[counter - 1]?.name}")
-            style.setBigContentTitle("INI BIG CONTENT TITLE")
-            style.setSummaryText("INI SUMMARY LHO")
-            notificationBuilder.setStyle(style)
-            notificationBuilder.setGroupSummary(true)
+            style.addLine("New Release ${tvRelease[1]?.title}")
+            style.addLine("New Release ${tvRelease[0]?.title}")
+            style.setBigContentTitle("$counter New Release Film")
+            style.setSummaryText("New Movie Release")
+            notificationBuilder
+                .setContentIntent(pendingIntent)
+                .setContentTitle("$counter New Release Film")
+                .setContentText("Release")
+                .setSmallIcon(R.drawable.ic_notif)
+                .setGroup(GROUP_TV)
+                .setGroupSummary(true)
+                .setStyle(style)
+                .setAutoCancel(true)
+            notificationManager.notify(ID_SUMMARY, notificationBuilder.build())
         }
-
-        counter++
-        sharedPreferences.edit().putInt(COUNTER, counter).apply()
-
-        notificationManager.notify(counter, notificationBuilder.build())
     }
 
 
@@ -228,6 +273,15 @@ class TvReminderService : BroadcastReceiver() {
             notificationManager.createNotificationChannel(notificationChannel)
         }
 
-        notificationManager.notify(ID_NOTIF, notificationBuilder.build())
+        notificationManager.notify(ID_NOTIFICATION, notificationBuilder.build())
+    }
+
+    fun stopJob(ctx: Context, request: Int) {
+        val alarmManager = ctx.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(ctx, TvReminderService::class.java)
+        val pendingIntent =
+            PendingIntent.getBroadcast(ctx, request, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        alarmManager.cancel(pendingIntent)
+        Toast.makeText(ctx, "Alarm Release", Toast.LENGTH_SHORT).show()
     }
 }

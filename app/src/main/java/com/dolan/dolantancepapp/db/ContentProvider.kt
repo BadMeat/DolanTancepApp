@@ -6,10 +6,11 @@ import android.content.UriMatcher
 import android.database.Cursor
 import android.net.Uri
 import android.os.Handler
-import com.dolan.dolantancepapp.favorite.FavoriteFragment
+import android.util.Log
 import com.dolan.dolantancepapp.db.DatabaseContract.Companion.AUTH
 import com.dolan.dolantancepapp.db.DatabaseContract.Companion.CONTENT_URI
 import com.dolan.dolantancepapp.db.DatabaseContract.Companion.TABLE_FAV
+import com.dolan.dolantancepapp.favorite.FavoriteFragment
 
 class ContentProvider : ContentProvider() {
 

@@ -49,10 +49,6 @@ class ApiClient {
         return data.getTvDetail(id, language)
     }
 
-    fun getTvRelease(dateGte: String, dateLte: String?): Observable<Response<ResponseTvRelase>> {
-        return data.getTvRelease(dateGte, dateLte)
-    }
-
     /**
      * Movie
      */
@@ -62,5 +58,9 @@ class ApiClient {
 
     fun getMovieDetail(id: Int, language: String?): Observable<Response<DetailMovie>> {
         return data.getMovieDetail(id, language)
+    }
+
+    fun getMovieRelease(dateGte: String, dateLte: String?): Observable<Response<ResponseMovie>> {
+        return data.getMovieRelease(dateGte, dateLte)
     }
 }
