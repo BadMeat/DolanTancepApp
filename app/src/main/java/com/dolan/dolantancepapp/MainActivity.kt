@@ -7,9 +7,11 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.dolan.dolantancepapp.alarm.SettingActivity
 import com.dolan.dolantancepapp.db.LoadFavCallback
+import com.dolan.dolantancepapp.favorite.FavoriteFragment
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), LoadFavCallback {
@@ -19,7 +21,14 @@ class MainActivity : AppCompatActivity(), LoadFavCallback {
     }
 
     override fun postExecute(cursor: Cursor?) {
+        val fragment =
+            supportFragmentManager.primaryNavigationFragment as NavHostFragment
+        val favFragment =
+            fragment.childFragmentManager.primaryNavigationFragment
 
+        if (favFragment is FavoriteFragment) {
+            favFragment.postExecute(cursor)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

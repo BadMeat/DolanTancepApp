@@ -34,6 +34,7 @@ class FavoriteFragment : Fragment(), LoadFavCallback {
 
     override fun postExecute(cursor: Cursor?) {
         if (cursor != null) {
+            Log.d("MASUKKK","MASUK SINI DONG PAAAK")
             val listFav = mapCursorToArrayList(cursor)
             if (listFav.isNotEmpty()) {
                 favAdapter.setFavList(listFav)
@@ -46,6 +47,8 @@ class FavoriteFragment : Fragment(), LoadFavCallback {
                 ).show()
             }
             progress_bar.invisible()
+        }else{
+            Log.d("CUURROSSRR","MASUK SINI DONG PAAAK")
         }
     }
 

@@ -4,14 +4,10 @@ import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.ContentValues
 import android.content.Context
-import android.database.ContentObserver
 import android.database.Cursor
 import android.os.AsyncTask
 import android.os.Bundle
-import android.os.Handler
-import android.os.HandlerThread
 import android.provider.BaseColumns._ID
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -37,29 +33,17 @@ import java.lang.ref.WeakReference
 
 class DetailActivity : AppCompatActivity(), LoadFavCallback {
 
-    override fun preExecute() {
-
-    }
-
-    override fun postExecute(cursor: Cursor?) {
-        val list = MappingHelper.mapCursorToArrayList(cursor)
-        if (list.isNotEmpty()) {
-            isFavorited = !isFavorited
-        }
-    }
-
     private lateinit var detailViewModel: DetailViewModel
 
     private val detailTvList = mutableListOf<DetailTv>()
     private val detailMovieList = mutableListOf<DetailMovie>()
     private var detailCode = ""
 
-    private lateinit var myDataObserver: ContentObserver
-    private lateinit var threadHandler: HandlerThread
-
-    private var isFavorited = false
+    private var isFavorite = false
 
     private var myMenu: Menu? = null
+
+    private var id = 0
 
     companion object {
         const val EXTRA_DETAIL_ID = "EXTRA_DETAIL_ID"
@@ -72,7 +56,7 @@ class DetailActivity : AppCompatActivity(), LoadFavCallback {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_favorite, menu)
         myMenu = menu
-        setFavorited()
+        setFavorite()
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -80,14 +64,8 @@ class DetailActivity : AppCompatActivity(), LoadFavCallback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
 
-        threadHandler = HandlerThread("DetailDataObserver")
-        threadHandler.start()
-        val handler = Handler(threadHandler.looper)
-        myDataObserver = DataObserver(handler, this)
-        contentResolver?.registerContentObserver(CONTENT_URI, true, myDataObserver)
-
         detailCode = intent.getStringExtra(EXTRA_TYPE)
-        val id = intent.getIntExtra(EXTRA_DETAIL_ID, 0)
+        id = intent.getIntExtra(EXTRA_DETAIL_ID, 0)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         detailViewModel = ViewModelProviders.of(this).get(DetailViewModel::class.java)
@@ -148,8 +126,19 @@ class DetailActivity : AppCompatActivity(), LoadFavCallback {
                 }
             }
         }
-        setFavorited()
+        setFavorite()
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun preExecute() {
+
+    }
+
+    override fun postExecute(cursor: Cursor?) {
+        val list = MappingHelper.mapCursorToArrayList(cursor)
+        if (list.isNotEmpty()) {
+            isFavorite = !isFavorite
+        }
     }
 
     private fun <T> setUI(model: T, kode: Int) {
@@ -176,29 +165,48 @@ class DetailActivity : AppCompatActivity(), LoadFavCallback {
 
     private fun <T> addFavorite(list: T, kode: Int) {
         val values = ContentValues()
+        var deletedId = 0
         when (kode) {
             1 -> {
                 @Suppress("UNCHECKED_CAST")
                 val tvList = list as MutableList<DetailTv>
-                values.put(_ID, tvList[0].id)
-                values.put(TITLE, tvList[0].name)
-                values.put(DATE, tvList[0].firstAirDate)
-                values.put(RATE, tvList[0].voteAverage)
-                values.put(POSTER, tvList[0].posterPath)
-                values.put(TYPE, 1)
+
+                if (isFavorite) {
+                    if (tvList[0].id != null) {
+                        deletedId = tvList[0].id!!
+                    }
+                } else {
+                    values.put(_ID, tvList[0].id)
+                    values.put(TITLE, tvList[0].name)
+                    values.put(DATE, tvList[0].firstAirDate)
+                    values.put(RATE, tvList[0].voteAverage)
+                    values.put(POSTER, tvList[0].posterPath)
+                    values.put(TYPE, 1)
+                }
             }
             2 -> {
                 @Suppress("UNCHECKED_CAST")
                 val movieList = list as MutableList<DetailMovie>
-                values.put(_ID, movieList[0].id)
-                values.put(TITLE, movieList[0].title)
-                values.put(DATE, movieList[0].releaseDate)
-                values.put(RATE, movieList[0].voteAverage)
-                values.put(POSTER, movieList[0].posterPath)
-                values.put(TYPE, 2)
+
+                if (isFavorite) {
+                    if (movieList[0].id != null) {
+                        deletedId = movieList[0].id!!
+                    }
+                } else {
+                    values.put(_ID, movieList[0].id)
+                    values.put(TITLE, movieList[0].title)
+                    values.put(DATE, movieList[0].releaseDate)
+                    values.put(RATE, movieList[0].voteAverage)
+                    values.put(POSTER, movieList[0].posterPath)
+                    values.put(TYPE, 2)
+                }
             }
         }
-        contentResolver?.insert(CONTENT_URI, values)
+        if (isFavorite) {
+            contentResolver?.delete(getContentId("$deletedId"), null, null)
+        } else {
+            contentResolver?.insert(CONTENT_URI, values)
+        }
 
         val appWidget = AppWidgetManager.getInstance(this)
         val ids = appWidget.getAppWidgetIds(
@@ -211,6 +219,8 @@ class DetailActivity : AppCompatActivity(), LoadFavCallback {
             ids,
             R.id.stack_view
         )
+
+        isFavorite = !isFavorite
 
         Toast.makeText(
             baseContext,
@@ -241,6 +251,7 @@ class DetailActivity : AppCompatActivity(), LoadFavCallback {
 
         override fun doInBackground(vararg params: String?): Cursor? {
             val contexte = weakContext.get()
+
             return contexte?.contentResolver?.query(
                 getContentId(params[0]),
                 null,
@@ -256,26 +267,10 @@ class DetailActivity : AppCompatActivity(), LoadFavCallback {
         }
     }
 
-    class DataObserver(handler: Handler, ctx: Context?) : ContentObserver(handler) {
-        val context = ctx
-
-        override fun onChange(selfChange: Boolean) {
-            super.onChange(selfChange)
-            if (context != null) {
-                LoadDetail(
-                    context,
-                    context as DetailActivity
-                ).execute()
-            }
-        }
-    }
-
-    private fun setFavorited() {
-        if (isFavorited) {
-            Log.d("MASUKKK", "MASUKFAVORITEDONG $myMenu")
+    private fun setFavorite() {
+        if (isFavorite) {
             myMenu?.getItem(0)?.icon = resources.getDrawable(R.drawable.ic_favorited, null)
         } else {
-            Log.d("MASUKKK", "TIDAKMASUKDONG")
             myMenu?.getItem(0)?.icon = resources.getDrawable(R.drawable.ic_favorite, null)
         }
     }
