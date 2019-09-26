@@ -1,11 +1,8 @@
 package com.dolan.dolantancepapp
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.view.View
-import java.io.IOException
-import java.net.HttpURLConnection
-import java.net.URL
+import java.text.SimpleDateFormat
+import java.util.*
 
 fun View.visible() {
     visibility = View.VISIBLE
@@ -13,4 +10,13 @@ fun View.visible() {
 
 fun View.invisible() {
     visibility = View.INVISIBLE
+}
+
+fun getConvertDate(dateString: String?): String? {
+    if (!dateString.isNullOrBlank()) {
+        val date = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(dateString)
+        val monthDate = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+        return monthDate.format(date)
+    }
+    return ""
 }

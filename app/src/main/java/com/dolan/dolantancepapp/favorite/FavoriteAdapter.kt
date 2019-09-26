@@ -9,9 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dolan.dolantancepapp.BuildConfig
 import com.dolan.dolantancepapp.R
 import com.dolan.dolantancepapp.db.Favorite
+import com.dolan.dolantancepapp.getConvertDate
 import com.squareup.picasso.Picasso
 
-class FavoriteAdapter(private val listerner: (Favorite) -> Unit) :
+class FavoriteAdapter(private val listener: (Favorite) -> Unit) :
     RecyclerView.Adapter<FavoriteAdapter.FavoriteHolder>() {
 
     private val favList = mutableListOf<Favorite>()
@@ -35,7 +36,7 @@ class FavoriteAdapter(private val listerner: (Favorite) -> Unit) :
     override fun getItemCount() = favList.size
 
     override fun onBindViewHolder(holder: FavoriteHolder, position: Int) {
-        holder.bindItem(favList[position], listerner)
+        holder.bindItem(favList[position], listener)
     }
 
     class FavoriteHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -47,7 +48,7 @@ class FavoriteAdapter(private val listerner: (Favorite) -> Unit) :
 
         fun bindItem(e: Favorite, listener: (Favorite) -> Unit) {
             txtTitle.text = e.title
-            txtDate.text = e.date
+            txtDate.text = getConvertDate(e.date)
             txtRate.text = e.rate.toString()
             if (e.poster != null) {
                 Picasso.get().load("${BuildConfig.BASE_IMAGE}${e.poster}").into(imgPoster)

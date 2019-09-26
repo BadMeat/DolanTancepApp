@@ -28,30 +28,6 @@ import java.lang.ref.WeakReference
 
 class FavoriteFragment : Fragment(), LoadFavCallback {
 
-    override fun preExecute() {
-        progress_bar.visible()
-    }
-
-    override fun postExecute(cursor: Cursor?) {
-        if (cursor != null) {
-            Log.d("MASUKKK","MASUK SINI DONG PAAAK")
-            val listFav = mapCursorToArrayList(cursor)
-            if (listFav.isNotEmpty()) {
-                favAdapter.setFavList(listFav)
-            } else {
-                favAdapter.setFavList(mutableListOf())
-                Toast.makeText(
-                    context,
-                    resources.getString(R.string.data_kosong),
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-            progress_bar.invisible()
-        }else{
-            Log.d("CUURROSSRR","MASUK SINI DONG PAAAK")
-        }
-    }
-
     private lateinit var favAdapter: FavoriteAdapter
     private lateinit var handlerThread: HandlerThread
     private lateinit var myObserver: ContentObserver
@@ -72,7 +48,6 @@ class FavoriteFragment : Fragment(), LoadFavCallback {
                 1 -> DetailActivity.EXTRA_TV
                 else -> DetailActivity.EXTRA_MOVIE
             }
-            Log.d("MYTYPEEE", "${it.type}")
             intent.putExtra(DetailActivity.EXTRA_TYPE, type)
             intent.putExtra(DetailActivity.EXTRA_DETAIL_ID, it.id)
             startActivity(intent)
@@ -129,6 +104,27 @@ class FavoriteFragment : Fragment(), LoadFavCallback {
                     ).execute()
                 }
             }
+        }
+    }
+
+    override fun preExecute() {
+        progress_bar.visible()
+    }
+
+    override fun postExecute(cursor: Cursor?) {
+        if (cursor != null) {
+            val listFav = mapCursorToArrayList(cursor)
+            if (listFav.isNotEmpty()) {
+                favAdapter.setFavList(listFav)
+            } else {
+                favAdapter.setFavList(mutableListOf())
+                Toast.makeText(
+                    context,
+                    resources.getString(R.string.data_kosong),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            progress_bar.invisible()
         }
     }
 }

@@ -40,8 +40,7 @@ class TvReminderService : BroadcastReceiver() {
 
         const val REQUEST_ALARM_DAILY = 101
         const val REQUEST_ALARM_RELEASE = 201
-
-        const val MAX_REQUEST = 1
+        
         const val ACTION_DAILY = "com.dolan.dolantancepapp.alarm.ACTION_DAILY"
         const val ACTION_RELEASE = "com.dolan.dolantancepapp.alarm.ACTION_RELEASE"
 

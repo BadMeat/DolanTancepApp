@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.dolan.dolantancepapp.BuildConfig
 import com.dolan.dolantancepapp.R
+import com.dolan.dolantancepapp.getConvertDate
 import com.squareup.picasso.Picasso
 
 class TvAdapter(
@@ -50,7 +51,7 @@ class TvAdapter(
 
         fun bindItem(e: ResultsItem, listener: (ResultsItem) -> Unit) {
             txtTitle.text = e.name
-            txtDate.text = e.firstAirDate
+            txtDate.text = getConvertDate(e.firstAirDate)
             txtRate.text = e.voteAverage.toString()
             if (e.posterPath != null) {
                 Picasso.get().load("${BuildConfig.BASE_IMAGE}${e.posterPath}").into(imgPoster)

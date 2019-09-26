@@ -26,6 +26,7 @@ import com.dolan.dolantancepapp.db.DatabaseContract.Companion.getContentId
 import com.dolan.dolantancepapp.db.LoadFavCallback
 import com.dolan.dolantancepapp.db.MappingHelper
 import com.dolan.dolantancepapp.favorite.FavoriteWidget
+import com.dolan.dolantancepapp.getConvertDate
 import com.dolan.dolantancepapp.invisible
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_detail.*
@@ -146,7 +147,7 @@ class DetailActivity : AppCompatActivity(), LoadFavCallback {
             1 -> {
                 val detail = model as DetailTv
                 txt_title.text = detail.name
-                txt_date.text = detail.firstAirDate
+                txt_date.text = getConvertDate(detail.firstAirDate)
                 txt_rate.text = detail.voteAverage.toString()
                 txt_descs.text = detail.overview
                 Picasso.get().load("${BuildConfig.BASE_IMAGE}${detail.posterPath}").into(img_poster)
@@ -154,7 +155,7 @@ class DetailActivity : AppCompatActivity(), LoadFavCallback {
             2 -> {
                 val detail = model as DetailMovie
                 txt_title.text = detail.title
-                txt_date.text = detail.releaseDate
+                txt_date.text = getConvertDate(detail.releaseDate)
                 txt_rate.text = detail.voteAverage.toString()
                 txt_descs.text = detail.overview
                 Picasso.get().load("${BuildConfig.BASE_IMAGE}${detail.posterPath}").into(img_poster)

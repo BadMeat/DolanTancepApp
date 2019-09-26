@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.dolan.dolantancepapp.BuildConfig
 import com.dolan.dolantancepapp.R
+import com.dolan.dolantancepapp.getConvertDate
 import com.squareup.picasso.Picasso
 
 class MovieAdapter(private val listener: (Movie?) -> Unit) :
@@ -47,7 +48,7 @@ class MovieAdapter(private val listener: (Movie?) -> Unit) :
 
         fun bindItem(e: Movie?, listener: (Movie?) -> Unit) {
             txtTitle.text = e?.title
-            txtDate.text = e?.releaseDate
+            txtDate.text = getConvertDate(e?.releaseDate)
             txtRate.text = e?.voteAverage.toString()
             if (e?.posterPath != null) {
                 Picasso.get().load("${BuildConfig.BASE_IMAGE}${e.posterPath}").into(imgPoster)
