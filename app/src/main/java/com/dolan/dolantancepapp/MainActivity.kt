@@ -3,6 +3,7 @@ package com.dolan.dolantancepapp
 import android.content.Intent
 import android.database.Cursor
 import android.os.Bundle
+import android.provider.Settings
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -47,6 +48,9 @@ class MainActivity : AppCompatActivity(), LoadFavCallback {
         when (item?.itemId) {
             R.id.menu_setting -> {
                 startActivity(Intent(this, SettingActivity::class.java))
+            }
+            R.id.menu_language -> {
+                startActivity(Intent(Settings.ACTION_LOCALE_SETTINGS))
             }
         }
         return super.onOptionsItemSelected(item)

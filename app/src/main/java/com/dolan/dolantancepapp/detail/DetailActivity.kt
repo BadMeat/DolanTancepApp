@@ -8,6 +8,7 @@ import android.database.Cursor
 import android.os.AsyncTask
 import android.os.Bundle
 import android.provider.BaseColumns._ID
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -31,6 +32,7 @@ import com.dolan.dolantancepapp.invisible
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_detail.*
 import java.lang.ref.WeakReference
+import java.util.*
 
 class DetailActivity : AppCompatActivity(), LoadFavCallback {
 
@@ -65,6 +67,13 @@ class DetailActivity : AppCompatActivity(), LoadFavCallback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
 
+        val defaultLang = Locale.getDefault().displayLanguage
+        Log.d("MYLANGUAGE",defaultLang)
+        var lang = "en-US"
+        if (defaultLang.equals("Indonesia", true)) {
+            lang = "id"
+        }
+
         detailCode = intent.getStringExtra(EXTRA_TYPE)
         id = intent.getIntExtra(EXTRA_DETAIL_ID, 0)
 
@@ -73,10 +82,10 @@ class DetailActivity : AppCompatActivity(), LoadFavCallback {
 
         if (detailCode.equals(EXTRA_TV, true)) {
             detailViewModel.getTvDetailList().observe(this, detailTvModel)
-            detailViewModel.getTvData(id, "en-US")
+            detailViewModel.getTvData(id, lang)
         } else if (detailCode.equals(EXTRA_MOVIE, true)) {
             detailViewModel.getMovieDetailList().observe(this, detailMovieModel)
-            detailViewModel.getMovieData(id, "en-US")
+            detailViewModel.getMovieData(id, lang)
         }
 
         LoadDetail(baseContext, this).execute("$id")

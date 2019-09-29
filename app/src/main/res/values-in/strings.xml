@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">DolanTancepApp</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="tv">Televisi</string>
+    <string name="movie">Filem</string>
+    <string name="fav">Andalan</string>
+    <string name="title">Judul</string>
+    <string name="date">Tanggal</string>
+    <string name="rate">Penilaian</string>
+    <string name="poster">Poster</string>
+    <string name="search">Pencarian</string>
+    <string name="save_succes">Simpan Berhasil</string>
+    <string name="delete_success">Hapus Berhasil</string>
+    <string name="setting">Pengaturan</string>
+    <string name="relase_reminder">Pengingat Filem</string>
+    <string name="daily_reminder">Pengingat Harian</string>
+    <string name="reminder_showing_move_that_released_today">Mengingatkan filem rilis hari ini</string>
+    <string name="reminder_for_return_to_app">Pengingat kembali ke aplikasi</string>
+    <string name="appwidget_text">CONTOH</string>
+    <string name="add_widget">Tambah Widget</string>
+    <string name="deskripsi">Deskripsi</string>
+    <string name="alarm_set">Alarm diatur</string>
+    <string name="title_activity_setting">Aktifitas Pengaturan</string>
+    <string name="data_kosong">Data Kosong</string>
+    <string name="language">Bahasa</string>
+</resources>

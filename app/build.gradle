@@ -69,8 +69,5 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment-ktx:2.1.0'
     implementation 'androidx.navigation:navigation-ui-ktx:2.1.0'
 
-    //Anko Sqlite
-    implementation "org.jetbrains.anko:anko-sqlite:$anko_version"
-
 
 }

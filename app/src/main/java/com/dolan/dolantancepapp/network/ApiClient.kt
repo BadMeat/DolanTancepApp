@@ -1,7 +1,6 @@
 package com.dolan.dolantancepapp.network
 
 import com.dolan.dolantancepapp.BuildConfig
-import com.dolan.dolantancepapp.alarm.ResponseTvRelase
 import com.dolan.dolantancepapp.detail.DetailMovie
 import com.dolan.dolantancepapp.detail.DetailTv
 import com.dolan.dolantancepapp.movie.ResponseMovie

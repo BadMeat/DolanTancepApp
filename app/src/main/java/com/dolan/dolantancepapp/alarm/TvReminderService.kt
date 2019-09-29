@@ -40,7 +40,7 @@ class TvReminderService : BroadcastReceiver() {
 
         const val REQUEST_ALARM_DAILY = 101
         const val REQUEST_ALARM_RELEASE = 201
-        
+
         const val ACTION_DAILY = "com.dolan.dolantancepapp.alarm.ACTION_DAILY"
         const val ACTION_RELEASE = "com.dolan.dolantancepapp.alarm.ACTION_RELEASE"
 
@@ -126,16 +126,12 @@ class TvReminderService : BroadcastReceiver() {
                 ctx,
                 REQUEST_ALARM_DAILY,
                 intent,
-                PendingIntent.FLAG_UPDATE_CURRENT
+                0
             )
         val calendar = Calendar.getInstance()
-        val year = calendar.get(Calendar.YEAR)
-        val month = calendar.get(Calendar.MONTH)
-        val day = calendar.get(Calendar.DAY_OF_MONTH)
-        val hour = 7
-        val minute = 0
-        val second = 0
-        calendar.set(year, month, day, hour, minute, second)
+        calendar.set(Calendar.HOUR_OF_DAY, 7)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
 
         alarmManager.setInexactRepeating(
             AlarmManager.RTC_WAKEUP,
@@ -159,16 +155,12 @@ class TvReminderService : BroadcastReceiver() {
                 ctx,
                 REQUEST_ALARM_RELEASE,
                 intent,
-                PendingIntent.FLAG_UPDATE_CURRENT
+                0
             )
         val calendar = Calendar.getInstance()
-        val year = calendar.get(Calendar.YEAR)
-        val month = calendar.get(Calendar.MONTH)
-        val day = calendar.get(Calendar.DAY_OF_MONTH)
-        val hour = 8
-        val minute = 0
-        val second = 0
-        calendar.set(year, month, day, hour, minute, second + 10)
+        calendar.set(Calendar.HOUR_OF_DAY, 8)
+        calendar.set(Calendar.MINUTE, 23)
+        calendar.set(Calendar.SECOND, 0)
 
         alarmManager.setInexactRepeating(
             AlarmManager.RTC_WAKEUP,

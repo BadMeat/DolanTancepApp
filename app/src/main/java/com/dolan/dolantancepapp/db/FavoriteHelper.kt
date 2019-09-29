@@ -29,11 +29,6 @@ class FavoriteHelper(ctx: Context?) {
         database = databaseHelper?.writableDatabase
     }
 
-    fun close() {
-        databaseHelper?.close()
-        database?.close()
-    }
-
     fun getProviderById(id: String?): Cursor? {
         return database?.query(
             TABLE_FAV,

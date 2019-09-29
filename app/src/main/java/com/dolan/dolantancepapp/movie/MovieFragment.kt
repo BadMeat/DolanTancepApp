@@ -22,6 +22,7 @@ import com.dolan.dolantancepapp.detail.DetailActivity.Companion.EXTRA_TYPE
 import com.dolan.dolantancepapp.invisible
 import com.dolan.dolantancepapp.visible
 import kotlinx.android.synthetic.main.fragment_movie.*
+import java.util.*
 
 class MovieFragment : Fragment(), SearchView.OnQueryTextListener {
 
@@ -39,7 +40,12 @@ class MovieFragment : Fragment(), SearchView.OnQueryTextListener {
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
-        movieViewModel.getData("en-US", query)
+        val defaultLang = Locale.getDefault().displayLanguage
+        var lang = "en-US"
+        if (defaultLang.equals("Indonesia", true)) {
+            lang = "id"
+        }
+        movieViewModel.getData(lang, query)
         progress_bar.visible()
         hideVirtualKeyboard()
         return true

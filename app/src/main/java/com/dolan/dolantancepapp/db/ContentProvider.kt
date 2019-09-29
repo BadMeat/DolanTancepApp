@@ -6,7 +6,6 @@ import android.content.UriMatcher
 import android.database.Cursor
 import android.net.Uri
 import android.os.Handler
-import android.util.Log
 import com.dolan.dolantancepapp.db.DatabaseContract.Companion.AUTH
 import com.dolan.dolantancepapp.db.DatabaseContract.Companion.CONTENT_URI
 import com.dolan.dolantancepapp.db.DatabaseContract.Companion.TABLE_FAV
