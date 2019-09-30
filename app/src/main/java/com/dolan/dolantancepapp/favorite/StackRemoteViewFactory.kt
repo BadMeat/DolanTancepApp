@@ -55,15 +55,17 @@ class StackRemoteViewFactory(ctx: Context) : RemoteViewsService.RemoteViewsFacto
 
     override fun getViewAt(position: Int): RemoteViews {
         val rv = RemoteViews(context?.packageName, R.layout.widget_item)
-        rv.setImageViewBitmap(R.id.img_view, mWidgetItem[position])
+        if(mWidgetItem.isNotEmpty()){
+            rv.setImageViewBitmap(R.id.img_view, mWidgetItem[position])
 
-        val extra = Bundle()
-        extra.putString(FavoriteWidget.EXTRA_ITEM, favList[position].title)
+            val extra = Bundle()
+            extra.putString(FavoriteWidget.EXTRA_ITEM, favList[position].title)
 
-        val fillIntent = Intent()
-        fillIntent.putExtras(extra)
+            val fillIntent = Intent()
+            fillIntent.putExtras(extra)
 
-        rv.setOnClickFillInIntent(R.id.img_view, fillIntent)
+            rv.setOnClickFillInIntent(R.id.img_view, fillIntent)
+        }
         return rv
     }
 

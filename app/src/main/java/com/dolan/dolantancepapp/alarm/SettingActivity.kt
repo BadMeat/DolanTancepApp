@@ -34,12 +34,12 @@ class SettingActivity : AppCompatActivity() {
         sw_daily.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 reminderService.setDaily(
-                    baseContext,
+                    this,
                     "Dolan Tancep",
                     "Haloo yuk cari cari film"
                 )
             } else {
-                reminderService.stopJob(baseContext, TvReminderService.REQUEST_ALARM_DAILY)
+                reminderService.stopJob(this, TvReminderService.REQUEST_ALARM_DAILY)
             }
             daily = !daily
             sharedDaily.edit().putBoolean(EXTRA_DAILY, daily).apply()
