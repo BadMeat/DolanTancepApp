@@ -68,7 +68,6 @@ class DetailActivity : AppCompatActivity(), LoadFavCallback {
         setContentView(R.layout.activity_detail)
 
         val defaultLang = Locale.getDefault().displayLanguage
-        Log.d("MYLANGUAGE",defaultLang)
         var lang = "en-US"
         if (defaultLang.equals("Indonesia", true)) {
             lang = "id"
