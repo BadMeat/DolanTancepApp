@@ -19,6 +19,7 @@ import com.dolan.dolantancepapp.R
 import com.dolan.dolantancepapp.detail.DetailActivity
 import com.dolan.dolantancepapp.detail.DetailActivity.Companion.EXTRA_TV
 import com.dolan.dolantancepapp.detail.DetailActivity.Companion.EXTRA_TYPE
+import com.dolan.dolantancepapp.getLanguage
 import com.dolan.dolantancepapp.invisible
 import com.dolan.dolantancepapp.visible
 import kotlinx.android.synthetic.main.fragment_tv.*
@@ -48,6 +49,8 @@ class TvFragment : Fragment(), SearchView.OnQueryTextListener {
         clearSearch()
         hideVirtualKeyboard()
         searchView.setOnCloseListener {
+            progress_bar.visible()
+            tvViewModel.getTvPopular(getLanguage())
             false
         }
     }
@@ -57,6 +60,7 @@ class TvFragment : Fragment(), SearchView.OnQueryTextListener {
 
         tvViewModel = ViewModelProviders.of(this).get(TvViewModel::class.java)
         tvViewModel.getTvList().observe(this, getTv)
+        tvViewModel.getTvPopular(getLanguage())
 
         tvAdapter = TvAdapter {
             val intent = Intent(context, DetailActivity::class.java)
@@ -81,12 +85,7 @@ class TvFragment : Fragment(), SearchView.OnQueryTextListener {
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
-        val defaultLang = Locale.getDefault().displayLanguage
-        var lang = "en-US"
-        if (defaultLang.equals("Indonesia", true)) {
-            lang = "id"
-        }
-        tvViewModel.getTv(lang, query)
+        tvViewModel.getTv(getLanguage(), query)
         progress_bar.visible()
         hideVirtualKeyboard()
         return true
@@ -111,12 +110,5 @@ class TvFragment : Fragment(), SearchView.OnQueryTextListener {
         searchView.onActionViewCollapsed()
         searchView.setQuery("", false)
         searchView.clearFocus()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        if (::tvViewModel.isInitialized) {
-            tvViewModel.disposableClose()
-        }
     }
 }

@@ -19,10 +19,10 @@ import com.dolan.dolantancepapp.R
 import com.dolan.dolantancepapp.detail.DetailActivity
 import com.dolan.dolantancepapp.detail.DetailActivity.Companion.EXTRA_MOVIE
 import com.dolan.dolantancepapp.detail.DetailActivity.Companion.EXTRA_TYPE
+import com.dolan.dolantancepapp.getLanguage
 import com.dolan.dolantancepapp.invisible
 import com.dolan.dolantancepapp.visible
 import kotlinx.android.synthetic.main.fragment_movie.*
-import java.util.*
 
 class MovieFragment : Fragment(), SearchView.OnQueryTextListener {
 
@@ -40,13 +40,7 @@ class MovieFragment : Fragment(), SearchView.OnQueryTextListener {
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
-        val defaultLang = Locale.getDefault().displayLanguage
-        var lang = "en-US"
-        if (defaultLang.equals("Indonesia", true)) {
-            lang = "id"
-        }
-        movieViewModel.getData(lang, query)
-        progress_bar.visible()
+        movieViewModel.getData(getLanguage(), query)
         hideVirtualKeyboard()
         return true
     }
@@ -63,6 +57,12 @@ class MovieFragment : Fragment(), SearchView.OnQueryTextListener {
 
         clearSearch()
         hideVirtualKeyboard()
+
+        searchView.setOnCloseListener {
+            progress_bar.visible()
+            movieViewModel.getListData(getLanguage())
+            false
+        }
     }
 
     override fun onCreateView(
@@ -87,14 +87,7 @@ class MovieFragment : Fragment(), SearchView.OnQueryTextListener {
 
         movieViewModel = ViewModelProviders.of(this).get(MovieViewModel::class.java)
         movieViewModel.getMovieList().observe(this, movieObserver)
-    }
-
-
-    override fun onDestroy() {
-        super.onDestroy()
-        if (::movieViewModel.isInitialized) {
-            movieViewModel.closeDispose()
-        }
+        movieViewModel.getListData(getLanguage())
     }
 
     /**

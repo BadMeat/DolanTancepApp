@@ -35,9 +35,31 @@ class TvViewModel : ViewModel() {
             )
     }
 
+    fun getTvPopular(language: String?) {
+        val item = mutableListOf<ResultsItem?>()
+        disposable = ApiClient.instance.getTvPopular(language)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .map {
+                it.body()?.results
+            }
+            .doFinally {
+                listTv.postValue(item)
+            }
+            .subscribe(
+                { result ->
+                    if (result != null) {
+                        item.addAll(result.toMutableList())
+                    }
+                },
+                { error -> Log.e("Error Response", "$error") }
+            )
+    }
+
     fun getTvList() = listTv
 
-    fun disposableClose() {
+    override fun onCleared() {
+        super.onCleared()
         disposable?.dispose()
     }
 }

@@ -20,3 +20,11 @@ fun getConvertDate(dateString: String?): String? {
     }
     return ""
 }
+
+fun getLanguage() : String{
+    val defaultLang = Locale.getDefault().displayLanguage
+    if (defaultLang.equals("Indonesia", true)) {
+        return "id"
+    }
+    return "en-US"
+}

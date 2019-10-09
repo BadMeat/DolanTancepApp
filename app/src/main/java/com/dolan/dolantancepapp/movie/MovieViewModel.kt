@@ -36,10 +36,31 @@ class MovieViewModel : ViewModel() {
             )
     }
 
-    fun closeDispose() {
-        disposable?.dispose()
+    fun getListData(language : String?){
+        val movie = mutableListOf<Movie?>()
+        disposable = ApiClient.instance.getMoviePopular(language)
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeOn(Schedulers.io())
+            .map {
+                it.body()?.results
+            }
+            .doFinally {
+                movieList.postValue(movie)
+            }
+            .subscribe(
+                { result ->
+                    if (result != null) {
+                        movie.addAll(result)
+                    }
+                },
+                { error -> Log.e("Eror Rquest Movie", "$error") }
+            )
     }
 
     fun getMovieList() = movieList
 
+    override fun onCleared() {
+        super.onCleared()
+        disposable?.dispose()
+    }
 }

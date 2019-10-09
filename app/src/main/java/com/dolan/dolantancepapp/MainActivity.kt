@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity(), LoadFavCallback {
             fragment.childFragmentManager.primaryNavigationFragment
 
         if (favFragment is FavoriteFragment) {
-            favFragment.postExecute(cursor)
+            favFragment.postExecute()
         }
     }
 

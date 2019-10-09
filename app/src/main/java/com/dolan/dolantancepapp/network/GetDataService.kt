@@ -34,6 +34,11 @@ interface GetDataService {
         @Query("primary_release_date.lte") todayLte: String?
     ): Observable<Response<ResponseMovie>>
 
+    @GET("${BuildConfig.BASE_URL}tv/popular?api_key=${BuildConfig.API_KEY}")
+    fun getTvPopular(
+        @Query("language") language: String? = "en-US"
+    ): Observable<Response<TvResponse>>
+
     /**
      * Movie
      */
@@ -48,4 +53,9 @@ interface GetDataService {
         @Path("id", encoded = true) id: Int,
         @Query("language") language: String? = "en-US"
     ): Observable<Response<DetailMovie>>
+
+    @GET("movie/popular?api_key=${BuildConfig.API_KEY}")
+    fun getMoviePopular(
+        @Query("language") language: String? = "en-US"
+    ) : Observable<Response<ResponseMovie>>
 }

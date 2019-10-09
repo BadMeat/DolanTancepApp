@@ -8,7 +8,6 @@ import android.database.Cursor
 import android.os.AsyncTask
 import android.os.Bundle
 import android.provider.BaseColumns._ID
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
